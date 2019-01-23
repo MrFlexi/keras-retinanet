@@ -36,7 +36,7 @@ def getBoxes(imageA: object, imageB: object) -> object:
 	return cnts
 
 
-def save_boxes_to_csv( cnts, path ):
+def save_boxes_to_csv( cnts, path, classname ):
 	#picturePath = '/content/'
 	picturePath = path
 	#loop over the contours
@@ -52,10 +52,10 @@ def save_boxes_to_csv( cnts, path ):
 			# writer.writeheader()
 			x2 = x + w
 			y2 = y + h
-			writer.writerow({'path': picturePath, 'x1': x, 'y1': y, 'x2': x2, 'y2': y2, 'class': '1x7Red'})
+			writer.writerow({'path': picturePath, 'x1': x, 'y1': y, 'x2': x2, 'y2': y2, 'class': classname })
 
 
-def extractFrames( ):
+def extractFrames( classname ):
 	picturePath = './webcam/images/frame4.jpg'
 	imageA = cv2.imread('./webcam/images/background.jpg')
 
@@ -75,9 +75,8 @@ def extractFrames( ):
 		if key & 0xFF == ord('s'):
 			print('Read %d frame: ' % count, ret)
 			path = os.path.join('./images/', "frame{:s}.jpg".format(str(time.strftime('%Y%m%d-%H%M%S'))))
-			save_boxes_to_csv( boxes, path )
-			cv2.imwrite(path, imgOriginal)  # save frame as JPEG file
-			count = count + 1
+			save_boxes_to_csv( boxes, path , classname )
+			cv2.imwrite(path, imgOriginal)  # save frame
 
 		if key & 0xFF == ord('q'):
 			break
@@ -86,8 +85,8 @@ def extractFrames( ):
 	cv2.destroyAllWindows()
 
 def main():
-
-	extractFrames()
+	classname = "1x5Red"
+	extractFrames(classname)
 
 if __name__ == "__main__":
 	main()
