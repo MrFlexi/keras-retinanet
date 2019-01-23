@@ -1,16 +1,10 @@
-# import the necessary packages
+import cv2
+import os
+import time
+import keyboard
 from skimage.measure import compare_ssim
 import argparse
 import imutils
-import cv2
-import csv
-
-# construct the argument parse and parse the arguments
-#ap = argparse.ArgumentParser()
-#ap.add_argument("-f", "--first", required=True,help="first input image")
-#ap.add_argument("-s", "--second", required=True,help="second")
-#args = vars(ap.parse_args())#
-
 
 def getBoxes( imageA, imageB):
 
@@ -63,20 +57,42 @@ def save_boxes_to_csv( cnts ):
             writer.writerow({'path': picturePath, 'x1': x, 'y1': y, 'x2': x2, 'y2': y2, 'class': '1x7Red'})
 
 
-# load the two input images
-picturePath = './webcam/images/frame4.jpg'
-imageA = cv2.imread('./webcam/images/background.jpg')
-imageB = cv2.imread(picturePath)
+def extractFrames( ):
+    picturePath = './webcam/images/frame4.jpg'
+    imageA = cv2.imread('./webcam/images/background.jpg')
 
-boxes  = getBoxes( imageA, imageB)
-imageB = markImage(imageB,boxes)
-save_boxes_to_csv( boxes )
+    cap = cv2.VideoCapture(0)
+    count = 0
+    while (True):
+        # Capture frame-by-frame
+        ret, frame = cap.read()
 
-# show the output images
+        # Our operations on the frame come here
+        #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Display the resulting frame
+
+        boxes = getBoxes(imageA, frame )
+        gray  = markImage(frame, boxes)
 
 
-cv2.imshow("Original", imageA)
-cv2.imshow("Modified", imageB)
-#cv2.imshow("Diff", diff)
-#cv2.imshow("Thresh", thresh)
-cv2.waitKey(0)
+        cv2.imshow('frame', gray)
+
+        key = cv2.waitKey(1)
+        if key & 0xFF == ord('s'):
+            print('Read %d frame: ' % count, ret)
+            cv2.imwrite(os.path.join('./webcam/images/', "frame{:s}.jpg".format(str(time.strftime('%Y%m%d-%H%M%S')))), frame)  # save frame as JPEG file
+            count = count + 1
+
+        if key & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+def main():
+
+    extractFrames()
+
+if __name__ == "__main__":
+    main()
