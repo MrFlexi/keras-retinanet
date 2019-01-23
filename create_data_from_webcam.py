@@ -5,6 +5,7 @@ import keyboard
 from skimage.measure import compare_ssim
 import argparse
 import imutils
+import csv
 
 def getBoxes(imageA: object, imageB: object) -> object:
 
@@ -32,15 +33,13 @@ def getBoxes(imageA: object, imageB: object) -> object:
 			# images differ
 			(x, y, w, h) = cv2.boundingRect(c)
 			cv2.rectangle(imageB, (x, y), (x + w, y + h), (0, 0, 255), 2)
+	return cnts
 
 
-	cv2.imshow("Modified", imageB)
-	return cnts, imageB
-
-
-def save_boxes_to_csv( cnts ):
-	picturePath = '/content/'
-	# loop over the contours
+def save_boxes_to_csv( cnts, path ):
+	#picturePath = '/content/'
+	picturePath = path
+	#loop over the contours
 	for c in cnts:
 		# compute the bounding box of the contour and then draw the
 		# bounding box on both input images to represent where the two
@@ -66,14 +65,18 @@ def extractFrames( ):
 		# Capture frame-by-frame
 		ret, frame = cap.read()
 
+		imgOriginal = frame.copy()
+
 		# Display the resulting frame
-		boxes, imageNew = getBoxes(imageA, frame )
-		cv2.imshow('frame', imageNew)
+		boxes = getBoxes(imageA, frame )
+		cv2.imshow('frame', frame)
 
 		key = cv2.waitKey(1)
 		if key & 0xFF == ord('s'):
 			print('Read %d frame: ' % count, ret)
-			cv2.imwrite(os.path.join('./webcam/images/', "frame{:s}.jpg".format(str(time.strftime('%Y%m%d-%H%M%S')))), frame)  # save frame as JPEG file
+			path = os.path.join('./images/', "frame{:s}.jpg".format(str(time.strftime('%Y%m%d-%H%M%S'))))
+			save_boxes_to_csv( boxes, path )
+			cv2.imwrite(path, imgOriginal)  # save frame as JPEG file
 			count = count + 1
 
 		if key & 0xFF == ord('q'):
