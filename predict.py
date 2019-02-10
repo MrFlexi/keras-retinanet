@@ -90,7 +90,7 @@ def predict( image ):
     # visualize detections
     for box, score, label in zip(boxes[0], scores[0], labels[0]):
         # scores are sorted so we can break
-        if score < 0.08:
+        if score < 0.6:
             break
 
         print("Item  ", labels_to_names[label], score)
@@ -113,15 +113,16 @@ def predict( image ):
 #image = read_image_bgr('Hamburg.jpg')
 #predict( image )
 
+# Build dictionary with class number and lable name labels_to_names = {0: 'person', 1: 'bicycle')
 labels_to_names = {}
 with open('./images/classes.csv', mode='r') as csv_file:
     fieldnames = ['label', 'class']
     labels_dict = csv.DictReader(csv_file, fieldnames=fieldnames)
 
     for row in labels_dict:
-        print(row["class"], row["label"])
-        labels_to_names[row["class"]] = row["label"]
+        labels_to_names[int(row["class"])] = row["label"]
 
+print(labels_to_names)
 
 print("-----------------------------------------------------------")
 print("1x4LRed")
