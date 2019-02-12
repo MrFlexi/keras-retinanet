@@ -20,7 +20,7 @@ def getBoxes(imageA: object, imageB: object) -> object:
 	print("SSIM: {}".format(score))
 
 	cnts = ""
-	if ( score < 0.97 ):
+	if ( score < 0.979 ):
 		# threshold the difference image, followed by finding contours to
 		# obtain the regions of the two input images that differ
 		thresh = cv2.threshold(diff, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
@@ -31,7 +31,9 @@ def getBoxes(imageA: object, imageB: object) -> object:
 			# bounding box on both input images to represent where the two
 			# images differ
 			(x, y, w, h) = cv2.boundingRect(c)
-			cv2.rectangle(imageB, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+			if w > 20:
+				cv2.rectangle(imageB, (x, y), (x + w, y + h), (0, 0, 255), 2)
 	return cnts
 
 
@@ -64,12 +66,14 @@ def extractFrames( classname ):
 	while (True):
 		# Capture frame-by-frame
 		ret, frame = cap.read()
-
-		imgOriginal = frame.copy()
-
+		croppend_image = frame[100:350, 200:450].copy()
+		#imgOriginal = frame.copy()
+		imgOriginal = croppend_image.copy()
 		# Display the resulting frame
-		boxes = getBoxes(imageA, frame )
-		cv2.imshow('frame', frame)
+		boxes = getBoxes(imageA, croppend_image )
+		cv2.rectangle(frame, (200, 100), (450,350), (0, 255, 255), 2)
+		cv2.imshow('WebCam', frame)
+		cv2.imshow('cropped', croppend_image)
 
 		key = cv2.waitKey(1)
 		if key & 0xFF == ord('s'):   # s = save image and boxes to annotation file
@@ -84,6 +88,7 @@ def extractFrames( classname ):
 			path = os.path.join('./webcam/images/', "background.jpg".format(str(time.strftime('%Y%m%d-%H%M%S'))))
 			save_boxes_to_csv( boxes, path , classname )
 			cv2.imwrite(path, imgOriginal)  # save frame
+			imageA=imgOriginal
 
 		if key & 0xFF == ord('q'):
 			break
