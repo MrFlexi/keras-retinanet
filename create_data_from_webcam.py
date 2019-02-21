@@ -70,7 +70,7 @@ def extractFrames( classname ):
 		#imgOriginal = frame.copy()
 		imgOriginal = croppend_image.copy()
 		# Display the resulting frame
-		boxes = getBoxes(imageA, croppend_image )
+		#boxes = getBoxes(imageA, croppend_image )
 		cv2.rectangle(frame, (200, 100), (450,350), (0, 255, 255), 2)
 		cv2.imshow('WebCam', frame)
 		cv2.imshow('cropped', croppend_image)
@@ -86,7 +86,7 @@ def extractFrames( classname ):
 		if key & 0xFF == ord('b'):   # b = sve new background image
 			print('Read %d frame: ' % count, ret)
 			path = os.path.join('./webcam/images/', "background.jpg".format(str(time.strftime('%Y%m%d-%H%M%S'))))
-			save_boxes_to_csv( boxes, path , classname )
+			#save_boxes_to_csv( boxes, path , classname )
 			cv2.imwrite(path, imgOriginal)  # save frame
 			imageA=imgOriginal
 

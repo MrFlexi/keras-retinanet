@@ -64,7 +64,7 @@ def save_boxes_to_csv( boxes ):
 
 # load the two input images
 imageA = cv2.imread('./webcam/images/background.jpg')
-imageB = cv2.imread('./webcam/images/frame4.jpg')
+imageB = cv2.imread('./webcam/images/DSC_1334.jpg')
 
 boxes  = getBoxes( imageA, imageB)
 save_boxes_to_csv( boxes )
