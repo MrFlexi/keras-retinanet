@@ -3,12 +3,13 @@ import os
 import cv2
 import time
 
-main_folder = ".\LegoPredict\lego_fotos\train\"
+main_folder = "../LegoPredict/lego_fotos/train/"
+
 if not os.path.isdir(main_folder):
     print("Folder does not exist", main_folder)
 
 
-with open('./images/annotations.csv', mode='r') as csv_file:
+with open('./images/anno.csv', mode='r') as csv_file:
     fieldnames = ['path', 'x1', 'y1', 'x2', 'y2', 'class']
     csv_reader = csv.DictReader(csv_file, fieldnames=fieldnames)
 

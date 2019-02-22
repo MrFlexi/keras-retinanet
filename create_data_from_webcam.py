@@ -107,7 +107,7 @@ def extractFrames( classname ):
 	cv2.destroyAllWindows()
 
 def main():
-	classname = "3x5LGreen"
+	classname = "3x5LBlack"
 	extractFrames(classname)
 
 if __name__ == "__main__":

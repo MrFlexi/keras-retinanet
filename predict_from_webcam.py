@@ -45,7 +45,7 @@ keras.backend.tensorflow_backend.set_session(get_session())
 
 #model_path = os.path.join('snapshots', 'resnet50_coco_best_v2.1.0.h5')
 
-model_path = os.path.join('snapshots', 'resnet50_lego_01.h5')
+model_path = os.path.join('snapshots', 'resnet50_lego_02.h5')
 
 #model_path = '/snapshots/resnet50_coco_best_v2.1.0.h5'
 # load retinanet model
