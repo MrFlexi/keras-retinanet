@@ -125,7 +125,7 @@ def extractFrames( classname ):
 
 
 def main():
-    classname = "3x5LGreen"
+    classname = "3x5LBlack"
     extractFrames(classname)
 
 if __name__ == "__main__":

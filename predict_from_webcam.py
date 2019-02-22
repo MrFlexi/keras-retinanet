@@ -72,7 +72,7 @@ def predict( image ):
     # visualize detections
     for box, score, label in zip(boxes[0], scores[0], labels[0]):
         # scores are sorted so we can break
-        if score < 0.6:
+        if score < 0.5:
             break
 
         print("Item  ", labels_to_names[label], score)
@@ -87,8 +87,6 @@ def predict( image ):
     cv2.imshow('Prediction', draw)
 
 def webcam( ):
-    picturePath = './webcam/images/frame4.jpg'
-    imageA = cv2.imread('./webcam/images/background.jpg')
 
     cap = cv2.VideoCapture(0)
     count = 0
