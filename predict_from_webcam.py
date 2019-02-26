@@ -45,7 +45,7 @@ keras.backend.tensorflow_backend.set_session(get_session())
 
 #model_path = os.path.join('snapshots', 'resnet50_coco_best_v2.1.0.h5')
 
-model_path = os.path.join('snapshots', 'resnet50_lego_02.h5')
+model_path = os.path.join('snapshots', 'resnet50_lego_03.h5')
 
 #model_path = '/snapshots/resnet50_coco_best_v2.1.0.h5'
 # load retinanet model
@@ -93,7 +93,8 @@ def webcam( ):
     while (True):
 
         ret, frame = cap.read()
-        croppend_image = frame[100:350, 200:450].copy()
+        #croppend_image = frame[100:350, 200:450].copy()
+        croppend_image = frame.copy()
         cv2.rectangle(frame, (200, 100), (450, 350), (0, 255, 255), 2)
         cv2.imshow('WebCam', frame)
         predict(croppend_image)
