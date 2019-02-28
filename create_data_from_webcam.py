@@ -35,7 +35,7 @@ def getBoxes(imageA: object, imageB: object) -> object:
 			# images differ
 			(x, y, w, h) = cv2.boundingRect(c)
 
-			if ((w * h) > 1000) and ((x + w) < image_width):
+			if ((w * h) > 100) and ((x + w) < image_width):
 				cnts_filtered.append(c)
 
 			# draw bounding boxes
@@ -94,6 +94,12 @@ def extractFrames( classname ):
 			save_boxes_to_csv( boxes, csv_path , classname )
 			cv2.imwrite(img_path, imgOriginal)  # save frame
 
+		if key & 0xFF == ord('o'):   # s = save image and boxes to annotation file
+			print('Read %d frame: ' % count, ret)
+			img_path = os.path.join('./images/', "frame{:s}.jpg".format(str(time.strftime('%Y%m%d-%H%M%S'))))
+			cv2.imwrite(img_path, imgOriginal)  # save frame
+
+
 		if key & 0xFF == ord('b'):   # b = sve new background image
 			print('Read %d frame: ' % count, ret)
 			path = os.path.join('./webcam/images/', "background.jpg".format(str(time.strftime('%Y%m%d-%H%M%S'))))
@@ -107,7 +113,7 @@ def extractFrames( classname ):
 	cv2.destroyAllWindows()
 
 def main():
-	classname = "3x5LGreen"
+	classname = "BeltGray"
 	extractFrames(classname)
 
 if __name__ == "__main__":
