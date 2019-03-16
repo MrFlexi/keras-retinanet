@@ -7,6 +7,8 @@
 
 # import keras
 import keras
+import tkinter as tk
+from tkinter import filedialog
 
 #Vor dem Start noch etwas installieren: python setup.py build_ext --inplace
 
@@ -25,41 +27,24 @@ import numpy as np
 import time
 import csv
 
+root = tk.Tk()
+root.withdraw()
+
 # set tf backend to allow memory to grow, instead of claiming everything
 import tensorflow as tf
+
+def get_filenames(root):
+    root.withdraw()
+    print("Initializing Dialogue... \nPlease select some images.")
+    tk_filenames = filedialog.askopenfilenames(initialdir=os.getcwd(), filetypes = [('Images', '.jpg'), ('all files', '*.*'),], title='Please select one or more files')
+    filenames = list(tk_filenames)
+    return filenames
 
 def get_session():
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
     return tf.Session(config=config)
 
-# use this environment flag to change which GPU to use
-#os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-
-# set the modified tf session as backend in keras
-keras.backend.tensorflow_backend.set_session(get_session())
-
-
-# adjust this to point to your downloaded/trained model
-# models can be downloaded here: https://github.com/fizyr/keras-retinanet/releases
-
-#model_path = os.path.join('snapshots', 'resnet50_coco_best_v2.1.0.h5')
-
-model_path = os.path.join('snapshots', 'resnet50_lego_01.h5')
-
-#model_path = '/snapshots/resnet50_coco_best_v2.1.0.h5'
-# load retinanet model
-model = models.load_model(model_path, backbone_name='resnet50')
-
-# if the model is not converted to an inference model, use the line below
-# see: https://github.com/fizyr/keras-retinanet#converting-a-training-model-to-inference-model
-#model = models.convert_model(model)
-
-#print(model.summary())
-
-# load label to names mapping for visualization purposes
-#labels_to_names = {0: 'person', 1: 'bicycle', 2: 'car', 3: 'motorcycle', 4: 'airplane', 5: 'bus', 6: 'train', 7: 'truck', 8: 'boat', 9: 'traffic light', 10: 'fire hydrant', 11: 'stop sign', 12: 'parking meter', 13: 'bench', 14: 'bird', 15: 'cat', 16: 'dog', 17: 'horse', 18: 'sheep', 19: 'cow', 20: 'elephant', 21: 'bear', 22: 'zebra', 23: 'giraffe', 24: 'backpack', 25: 'umbrella', 26: 'handbag', 27: 'tie', 28: 'suitcase', 29: 'frisbee', 30: 'skis', 31: 'snowboard', 32: 'sports ball', 33: 'kite', 34: 'baseball bat', 35: 'baseball glove', 36: 'skateboard', 37: 'surfboard', 38: 'tennis racket', 39: 'bottle', 40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife', 44: 'spoon', 45: 'bowl', 46: 'banana', 47: 'apple', 48: 'sandwich', 49: 'orange', 50: 'broccoli', 51: 'carrot', 52: 'hot dog', 53: 'pizza', 54: 'donut', 55: 'cake', 56: 'chair', 57: 'couch', 58: 'potted plant', 59: 'bed', 60: 'dining table', 61: 'toilet', 62: 'tv', 63: 'laptop', 64: 'mouse', 65: 'remote', 66: 'keyboard', 67: 'cell phone', 68: 'microwave', 69: 'oven', 70: 'toaster', 71: 'sink', 72: 'refrigerator', 73: 'book', 74: 'clock', 75: 'vase', 76: 'scissors', 77: 'teddy bear', 78: 'hair drier', 79: 'toothbrush'}
-#labels_to_names = {0: 'person', 1: 'PinBlack', 2: '1x15Blue', 3: '1x9Red', 4: 'JunctionGray', 5: '1x7Red', 6: '1x13Gray', 7: '1x4LRed'}
 
 
 def predict( image ):
@@ -83,7 +68,7 @@ def predict( image ):
     # visualize detections
     for box, score, label in zip(boxes[0], scores[0], labels[0]):
         # scores are sorted so we can break
-        if score < 0.6:
+        if score < 0.7:
             break
 
         print("Item  ", labels_to_names[label], score)
@@ -100,34 +85,44 @@ def predict( image ):
     plt.imshow(draw)
     plt.show()
 
+if __name__ == '__main__':
 
-# load image
-#print("Hamburg")
-#image = read_image_bgr('Hamburg.jpg')
-#predict( image )
+    print("loading model...")
+    # set the modified tf session as backend in keras
+    keras.backend.tensorflow_backend.set_session(get_session())
 
-# Build dictionary with class number and lable name labels_to_names = {0: 'person', 1: 'bicycle')
-labels_to_names = {}
-with open('./images/classes.csv', mode='r') as csv_file:
-    fieldnames = ['label', 'class']
-    labels_dict = csv.DictReader(csv_file, fieldnames=fieldnames)
+    # adjust this to point to your downloaded/trained model
+    # models can be downloaded here: https://github.com/fizyr/keras-retinanet/releases
 
-    for row in labels_dict:
-        labels_to_names[int(row["class"])] = row["label"]
+    model_path = os.path.join('snapshots', 'resnet50_lego_01.h5')
 
-print(labels_to_names)
+    # load retinanet model
+    model = models.load_model(model_path, backbone_name='resnet50')
 
-print("-----------------------------------------------------------")
-print("1x4LRed")
-image = read_image_bgr('./images/frame20190125-125636.jpg')
-predict( image )
+    print("start prediction...")
+    # Build dictionary with class number and lable name labels_to_names = {0: 'person', 1: 'bicycle')
+    labels_to_names = {}
+    with open('./images/classes.csv', mode='r') as csv_file:
+        fieldnames = ['label', 'class']
+        labels_dict = csv.DictReader(csv_file, fieldnames=fieldnames)
 
-print("-----------------------------------------------------------")
-print("1x5LBlack")
-image = read_image_bgr('./images/frame20190131-070052.jpg')
-predict( image )
+        for row in labels_dict:
+            labels_to_names[int(row["class"])] = row["label"]
 
-print("-----------------------------------------------------------")
-print("Multi")
-image = read_image_bgr('./images/frame20190131-071501.jpg')
-predict( image )
+    print(labels_to_names)
+
+    while (True):
+        print("get images")
+        images = get_filenames(root)
+
+        for image_path in images:
+            print("Image", image_path)
+            image = read_image_bgr(image_path)
+            predict(image)
+
+        print("...prediction ended")
+
+        key = cv2.waitKey(1)
+        if key & 0xFF == ord('q'):
+            break
+    print("Ende")

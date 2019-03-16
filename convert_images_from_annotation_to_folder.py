@@ -3,7 +3,7 @@ import os
 import cv2
 import time
 
-main_folder = "../LegoPredict/lego_fotos/train/"
+main_folder = "../LegoPredict/lego_fotos/new/"
 
 if not os.path.isdir(main_folder):
     print("Folder does not exist", main_folder)
